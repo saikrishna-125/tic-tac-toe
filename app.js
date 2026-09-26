@@ -135,8 +135,8 @@ const gameUI = (function () {
   playerForm.addEventListener("submit", (e) => {
     e.preventDefault();
 
-    playerXName = playerXInput.value;
-    playerOName = playerOInput.value;
+    const playerXName = playerXInput.value;
+    const playerOName = playerOInput.value;
 
     ticTacToe.addPlayers(playerXName, playerOName);
 
@@ -214,9 +214,7 @@ const ticTacToe = (function () {
       gameUI.displayResult(`${currentPlayer.getPlayerName()} has won the game`);
       currentPlayer.increaseScore();
       gameOver = true;
-    }
-
-    if (remainingTurns === 0) {
+    } else if (remainingTurns === 0) {
       gameUI.displayResult("Game over! It is a draw!");
       gameOver = true;
     }
