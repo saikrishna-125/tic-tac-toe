@@ -64,10 +64,27 @@ const gameBoard = (() => {
   return { displayBoard, playTurn, checkWin };
 })();
 
-const createPlayer = function (name, char) {
+const createPlayer = function (name, token) {
   const getPlayerName = function () {
     return name;
   };
+
+  const getPlayerToken = function () {
+    return token;
+  };
+
+  return { getPlayerName, getPlayerToken };
+};
+
+const playerX = createPlayer("John", "X");
+const playerO = createPlayer("Jack", "O");
+
+const playGame = function () {
+  turn = 0;
+
+  while (turn < 9 && gameBoard.checkWin()) {
+    
+  }
 };
 
 gameBoard.displayBoard();
