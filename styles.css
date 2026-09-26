@@ -121,6 +121,11 @@ input {
   font-size: 1.25em;
 }
 
+input:active {
+  background-color: #80d39b;
+  color: #100007;
+}
+
 .no-show {
   display: none;
 }
