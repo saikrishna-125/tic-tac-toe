@@ -1,0 +1,36 @@
+body {
+  background-color: #100007;
+}
+
+.game-container {
+  display: grid;
+
+  grid-template-columns: repeat(3, 50px);
+  grid-template-rows: repeat(3, 50px);
+}
+
+.game-cell {
+  border: 1px solid #80d39b;
+
+  border-left: none;
+  border-top: none;
+
+  color: #80d39b;
+
+  display: grid;
+
+  align-items: center;
+  justify-items: center;
+}
+
+#cell_2_0,
+#cell_2_1,
+#cell_2_2 {
+  border-bottom: none;
+}
+
+#cell_0_2,
+#cell_1_2,
+#cell_2_2 {
+  border-right: none;
+}

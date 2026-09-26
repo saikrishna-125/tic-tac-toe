@@ -11,10 +11,8 @@ const gameBoard = (() => {
     gameBoard.push(row);
   }
 
-  const displayBoard = function () {
-    for (let i = 0; i <= 2; i++) {
-      console.log(gameBoard[i]);
-    }
+  const getGameBoard = function () {
+    return gameBoard;
   };
 
   const playTurn = function (x, y, char) {
@@ -41,14 +39,6 @@ const gameBoard = (() => {
     }
 
     if (
-      gameBoard[0][0] &&
-      gameBoard[0][0] === gameBoard[1][1] &&
-      gameBoard[1][1] === gameBoard[2][2]
-    ) {
-      return gameBoard[0][0];
-    }
-
-    if (
       (gameBoard[1][1] &&
         gameBoard[0][0] === gameBoard[1][1] &&
         gameBoard[1][1] === gameBoard[2][2]) ||
@@ -61,7 +51,7 @@ const gameBoard = (() => {
     return null;
   };
 
-  return { displayBoard, playTurn, checkWin };
+  return { getGameBoard, playTurn, checkWin };
 })();
 
 const createPlayer = function (name, token) {
@@ -76,26 +66,67 @@ const createPlayer = function (name, token) {
   return { getPlayerName, getPlayerToken };
 };
 
+const gameUI = (function () {
+  const gameCells = document.querySelectorAll(".game-cell");
+
+  const displayBoard = function () {
+    for (const gameCell of gameCells) {
+      let [x, y] = gameCell.id.split("_").slice(1);
+      gameCell.textContent = gameBoard.getGameBoard()[x][y];
+    }
+  };
+
+  for (const gameCell of gameCells) {
+    gameCell.addEventListener("click", () => {
+      if (!gameCell.textContent && !ticTacToe.getGameOver()) {
+        let [x, y] = gameCell.id.split("_").slice(1);
+        gameBoard.playTurn(x, y, ticTacToe.getCurrentPlayer().getPlayerToken());
+        ticTacToe.completeTurn();
+        displayBoard();
+      }
+    });
+  }
+
+  return { displayBoard };
+})();
+
 const playerX = createPlayer("John", "X");
 const playerO = createPlayer("Jack", "O");
 
-const playGame = function () {
-  turn = 0;
+const ticTacToe = (function () {
+  let remainingTurns = 9;
 
-  while (turn < 9 && gameBoard.checkWin()) {
-    
-  }
-};
+  const players = [playerX, playerO];
 
-gameBoard.displayBoard();
+  let currentPlayer = playerX;
 
-gameBoard.playTurn(1, 1, "X");
-console.log(gameBoard.checkWin());
+  let gameOver = false;
 
-gameBoard.playTurn(0, 0, "X");
-console.log(gameBoard.checkWin());
+  const completeTurn = function () {
+    if (gameBoard.checkWin()) {
+      console.log(`${currentPlayer.getPlayerName()} has won the game`);
+      gameOver = true;
+      return;
+    }
 
-gameBoard.playTurn(2, 2, "X");
-console.log(gameBoard.checkWin());
+    remainingTurns -= 1;
+    currentPlayer = players[1 - (remainingTurns % 2)];
 
-gameBoard.displayBoard();
+    if (remainingTurns === 0) {
+      console.log("Game over! It is a draw!");
+      gameOver = true;
+    }
+  };
+
+  const getCurrentPlayer = function () {
+    return currentPlayer;
+  };
+
+  const getGameOver = function () {
+    return gameOver;
+  };
+
+  return { completeTurn, getCurrentPlayer, getGameOver };
+})();
+
+gameUI.displayBoard();
