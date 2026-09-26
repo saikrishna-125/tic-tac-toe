@@ -1,24 +1,35 @@
+// IIFE to setup gameBoard object
 const gameBoard = (() => {
-  const gameBoard = [];
+  let gameBoard;
 
-  for (let i = 0; i <= 2; i++) {
-    let row = [];
+  // set gameBoard initial cells to null
 
-    for (let j = 0; j <= 2; j++) {
-      row.push(null);
+  const newBoard = function newBoard() {
+    gameBoard = [];
+    for (let i = 0; i <= 2; i++) {
+      let row = [];
+
+      for (let j = 0; j <= 2; j++) {
+        row.push(null);
+      }
+
+      gameBoard.push(row);
     }
+  };
 
-    gameBoard.push(row);
-  }
+  newBoard();
 
+  // gameBoard getter
   const getGameBoard = function () {
     return gameBoard;
   };
 
+  // sets character token in specified cell
   const playTurn = function (x, y, char) {
     gameBoard[x][y] = char;
   };
 
+  // checks all 8 lines in the grid for a winning combination
   const checkWin = function () {
     for (let i = 0; i <= 2; i++) {
       if (
@@ -51,10 +62,13 @@ const gameBoard = (() => {
     return null;
   };
 
-  return { getGameBoard, playTurn, checkWin };
+  return { getGameBoard, playTurn, checkWin, newBoard };
 })();
 
+// Factory function to create player
 const createPlayer = function (name, token) {
+  let score = 0;
+
   const getPlayerName = function () {
     return name;
   };
@@ -63,12 +77,30 @@ const createPlayer = function (name, token) {
     return token;
   };
 
-  return { getPlayerName, getPlayerToken };
+  const increaseScore = function () {
+    score++;
+  };
+
+  const getScore = function () {
+    return score;
+  };
+
+  return { getPlayerName, getPlayerToken, increaseScore, getScore };
 };
 
+// IIFE to setup game UI
 const gameUI = (function () {
   const gameCells = document.querySelectorAll(".game-cell");
+  const gameContainer = document.querySelector(".game-container");
+  const gameResult = document.querySelector(".result");
 
+  const playerXScore = document.querySelector("#player-x-score");
+  const playerOScore = document.querySelector("#player-o-score");
+
+  const playerFormContainer = document.querySelector(".player-form-container");
+  const gameOverButtons = document.querySelector(".game-over-buttons");
+
+  // Function that dispalays the gameBoard array on the UI
   const displayBoard = function () {
     for (const gameCell of gameCells) {
       let [x, y] = gameCell.id.split("_").slice(1);
@@ -78,6 +110,9 @@ const gameUI = (function () {
 
   for (const gameCell of gameCells) {
     gameCell.addEventListener("click", () => {
+      // condition blocks selecting already filled cell and
+      // prevents users to play after game is completed
+
       if (!gameCell.textContent && !ticTacToe.getGameOver()) {
         let [x, y] = gameCell.id.split("_").slice(1);
         gameBoard.playTurn(x, y, ticTacToe.getCurrentPlayer().getPlayerToken());
@@ -87,35 +122,117 @@ const gameUI = (function () {
     });
   }
 
-  return { displayBoard };
+  // Helper function to set result text on the UI
+  const displayResult = function (resultText) {
+    gameResult.textContent = resultText;
+  };
+
+  // Player input form
+  const playerXInput = document.querySelector("#player-x-name");
+  const playerOInput = document.querySelector("#player-o-name");
+  const playerForm = document.querySelector(".player-form");
+
+  playerForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    playerXName = playerXInput.value;
+    playerOName = playerOInput.value;
+
+    ticTacToe.addPlayers(playerXName, playerOName);
+
+    gameContainer.classList.remove("no-show");
+    playerFormContainer.classList.add("no-show");
+    displayBoard();
+
+    playerForm.reset();
+  });
+
+  const setScoreBoard = function (xName, oName, xScore, oScore) {
+    playerXScore.textContent = `${xName}: ${xScore}`;
+    playerOScore.textContent = `${oName}: ${oScore}`;
+  };
+
+  const addGameOverUI = function () {
+    const newRoundButton = document.createElement("button");
+    const newGameButton = document.createElement("button");
+
+    newRoundButton.textContent = "New Round";
+    newGameButton.textContent = "New Game";
+
+    newRoundButton.addEventListener("click", () => {
+      ticTacToe.resetGame();
+      newRoundButton.remove();
+      newGameButton.remove();
+      gameBoard.newBoard();
+      displayResult("");
+      displayBoard();
+    });
+
+    newGameButton.addEventListener("click", () => {
+      gameContainer.classList.add("no-show");
+      playerFormContainer.classList.remove("no-show");
+      ticTacToe.restartGame();
+      newRoundButton.remove();
+      newGameButton.remove();
+      gameBoard.newBoard();
+      displayResult("");
+      displayBoard();
+
+      playerXScore.textContent = "";
+      playerOScore.textContent = "";
+    });
+
+    gameOverButtons.appendChild(newRoundButton);
+    gameOverButtons.appendChild(newGameButton);
+  };
+
+  return { displayBoard, displayResult, addGameOverUI, setScoreBoard };
 })();
 
-const playerX = createPlayer("John", "X");
-const playerO = createPlayer("Jack", "O");
-
+// TicTacToe game
 const ticTacToe = (function () {
   let remainingTurns = 9;
+  let players = [];
+  let currentPlayer;
 
-  const players = [playerX, playerO];
+  const addPlayers = function (playerXName, playerOName) {
+    players.push(createPlayer(playerXName, "X"));
+    players.push(createPlayer(playerOName, "O"));
 
-  let currentPlayer = playerX;
+    currentPlayer = players[0];
+  };
 
   let gameOver = false;
 
+  // check win condition or end of all turns to decide winner or draw match,
+  // else decrement turns and switch player
+
   const completeTurn = function () {
+    remainingTurns -= 1;
+
     if (gameBoard.checkWin()) {
-      console.log(`${currentPlayer.getPlayerName()} has won the game`);
+      gameUI.displayResult(`${currentPlayer.getPlayerName()} has won the game`);
+      currentPlayer.increaseScore();
       gameOver = true;
+    }
+
+    if (remainingTurns === 0) {
+      gameUI.displayResult("Game over! It is a draw!");
+      gameOver = true;
+    }
+
+    if (gameOver) {
+      gameUI.setScoreBoard(
+        players[0].getPlayerName(),
+        players[1].getPlayerName(),
+        players[0].getScore(),
+        players[1].getScore(),
+      );
+      gameUI.addGameOverUI();
       return;
     }
 
-    remainingTurns -= 1;
     currentPlayer = players[1 - (remainingTurns % 2)];
-
-    if (remainingTurns === 0) {
-      console.log("Game over! It is a draw!");
-      gameOver = true;
-    }
   };
 
   const getCurrentPlayer = function () {
@@ -126,7 +243,24 @@ const ticTacToe = (function () {
     return gameOver;
   };
 
-  return { completeTurn, getCurrentPlayer, getGameOver };
-})();
+  const resetGame = function () {
+    remainingTurns = 9;
+    currentPlayer = players[0];
+    gameOver = false;
+  };
 
-gameUI.displayBoard();
+  const restartGame = function () {
+    players = [];
+    remainingTurns = 9;
+    gameOver = false;
+  };
+
+  return {
+    completeTurn,
+    getCurrentPlayer,
+    getGameOver,
+    addPlayers,
+    resetGame,
+    restartGame,
+  };
+})();

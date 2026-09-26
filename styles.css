@@ -1,26 +1,53 @@
 body {
-  background-color: #100007;
+  background-color: #80d39b;
+  font-family: sans-serif;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.game-ui {
+  display: grid;
+
+  grid-template-columns: 1fr;
+  gap: 50px;
 }
 
 .game-container {
   display: grid;
 
-  grid-template-columns: repeat(3, 50px);
-  grid-template-rows: repeat(3, 50px);
+  grid-template-columns: repeat(3, 100px);
+  grid-template-rows: repeat(3, 100px);
+  justify-self: center;
+}
+
+.result {
+  color: #100007;
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.score {
+  color: #100007;
+  text-align: center;
+
+  font-size: 1.25rem;
 }
 
 .game-cell {
-  border: 1px solid #80d39b;
-
+  border: 1px solid #100007;
   border-left: none;
   border-top: none;
-
-  color: #80d39b;
+  color: #100007;
 
   display: grid;
-
   align-items: center;
   justify-items: center;
+
+  font-size: 25px;
 }
 
 #cell_2_0,
@@ -33,4 +60,78 @@ body {
 #cell_1_2,
 #cell_2_2 {
   border-right: none;
+}
+
+.player-form-container {
+  display: grid;
+  gap: 50px;
+}
+
+.setup-players {
+  font-size: 1.5rem;
+  font-weight: bold;
+
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.player-form {
+  display: grid;
+  justify-items: center;
+  gap: 30px;
+}
+
+.player-title {
+  font-size: 1.25rem;
+}
+
+.name-field {
+  display: grid;
+  gap: 10px;
+  justify-items: center;
+  font-weight: bold;
+}
+
+button {
+  background-color: none;
+  border: none;
+  padding: 20px;
+  border-radius: 10px;
+
+  background-color: #4c0827;
+  color: #80d39b;
+
+  font-weight: bold;
+  font-size: 1em;
+}
+
+button:hover {
+  background-color: #100007;
+}
+
+input {
+  padding: 15px 10px;
+  border: none;
+
+  width: 100%;
+  background-color: #4c0827;
+  color: #80d39b;
+
+  border-radius: 5px;
+  font-size: 1.25em;
+}
+
+.no-show {
+  display: none;
+}
+
+.game-over-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.game-board {
+  display: grid;
+  gap: 30px;
 }

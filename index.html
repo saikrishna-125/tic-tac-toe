@@ -3,23 +3,61 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tic Tac Toe</title>
+    <title>Tic-Tac-Toe</title>
 
     <script src="app.js" defer></script>
     <link rel="stylesheet" href="styles.css" />
   </head>
+
   <body>
     <div class="game-ui">
-      <div class="game-container">
-        <div class="game-cell" id="cell_0_0"></div>
-        <div class="game-cell" id="cell_0_1"></div>
-        <div class="game-cell" id="cell_0_2"></div>
-        <div class="game-cell" id="cell_1_0"></div>
-        <div class="game-cell" id="cell_1_1"></div>
-        <div class="game-cell" id="cell_1_2"></div>
-        <div class="game-cell" id="cell_2_0"></div>
-        <div class="game-cell" id="cell_2_1"></div>
-        <div class="game-cell" id="cell_2_2"></div>
+      <h1>Tic-Tac-Toe</h1>
+      <div class="player-form-container">
+        <div class="setup-players">Setup Players</div>
+        <div>
+          <form action="" class="player-form">
+            <div class="player-title">Player X</div>
+            <div class="name-field">
+              <label for="player-x-name">Player Name</label>
+              <input
+                type="text"
+                id="player-x-name"
+                name="player-x-name"
+                required
+              />
+            </div>
+
+            <div class="player-title">Player O</div>
+            <div class="name-field">
+              <label for="player-o-name">Player Name</label>
+              <input
+                type="text"
+                id="player-o-name"
+                name="player-o-name"
+                required
+              />
+            </div>
+            <button id="submit-player-o">Submit Players</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="game-board">
+        <div class="game-container no-show">
+          <div class="game-cell" id="cell_0_0"></div>
+          <div class="game-cell" id="cell_0_1"></div>
+          <div class="game-cell" id="cell_0_2"></div>
+          <div class="game-cell" id="cell_1_0"></div>
+          <div class="game-cell" id="cell_1_1"></div>
+          <div class="game-cell" id="cell_1_2"></div>
+          <div class="game-cell" id="cell_2_0"></div>
+          <div class="game-cell" id="cell_2_1"></div>
+          <div class="game-cell" id="cell_2_2"></div>
+        </div>
+        <div class="result"></div>
+        <div id="player-x-score" class="score"></div>
+        <div id="player-o-score" class="score"></div>
+        <div class="game-over-buttons"></div>
       </div>
     </div>
   </body>
